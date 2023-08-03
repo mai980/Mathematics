@@ -1,0 +1,27 @@
+{
+    "latex-workshop.latex.tools": [
+        {
+            "name": "ptex2pdf",
+            "command": "ptex2pdf",
+            "args": [
+                "-shell-escape",
+                "-l",
+                "-ot",
+                "-kanji=utf8 -synctex=1 -interaction=nonstopmode -halt-on-error -file-line-error",
+                "%DOCFILE%.tex"
+            ]
+        }
+    ],
+    "latex-workshop.latex.recipes": [
+        {
+            "name": "toolchain",
+            "tools": [
+                "ptex2pdf"
+            ]
+        }
+    ],
+    "latex-workshop.view.pdf.viewer": "tab",
+    "editor.renderControlCharacters": true,
+    "latex-workshop.message.badbox.show": true,
+    "latex-workshop.latex.autoBuild.run": "onFileChange",
+}
