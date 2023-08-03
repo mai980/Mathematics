@@ -1,0 +1,1191 @@
+\documentclass[a4paper,12pt,autodetect-engine,dvipdfmx]{jsarticle}
+
+\topmargin -15mm
+% \oddsidemargin 0mm
+% \textwidth 140mm
+\textheight 210mm
+
+\usepackage[dvips,dvipdfmx]{graphicx}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{latexsym}
+\usepackage{fancybox}
+\usepackage{bm}
+\usepackage{color}
+\usepackage{colortbl,array,xcolor}
+
+
+\def\RC{\rowcolor{red!30}}
+\def\GC{\rowcolor{green!30}}
+% \def\GC{\indexcolor{green!30}}
+\newcolumntype{R}{>{\columncolor{red!30}}c}
+\newcolumntype{G}{>{\columncolor{green!30}}c}
+% \newcolumntype{A}{>{\columncolor{green!30}}c}
+
+\theoremstyle{definition}
+\newtheorem{dfn}{定義}[section]
+\newtheorem{lem}[dfn]{補題}
+\newtheorem{cor}[dfn]{系}
+\newtheorem{exm}[dfn]{例}
+\newtheorem{exa}[dfn]{例題}
+\newtheorem{thm}[dfn]{定理}
+\newtheorem{for}[dfn]{公式}
+\newtheorem{prp}[dfn]{命題}
+\newtheorem{rem}[dfn]{注意}
+
+\makeatletter
+\renewcommand{\theequation}{%
+\thesection.\arabic{equation}}
+\@addtoreset{equation}{section}
+\makeatother
+%%%%%%%%%%%%%%プリアンブル%%%%%%%%%%%%%%
+
+\begin{document}
+%%%%%%%%%%%%%%タイトル%%%%%%%%%%%%%%%%%
+\begin{center}
+{\LARGE{ \bf{線形代数学入門} }}
+
+\vspace{10mm}
+
+{\Large{ \bf{まい.}}}
+\end{center}
+
+%%%%%%%%%%%%%%概要%%%%%%%%%%%%%%%%%%%%
+\bigskip
+\begin{abstract}
+本資料では，機械学習や深層学習で頻繁に活用される線形代数学の基礎となる事項を述べる．
+
+なるべく平素な言葉を使うことを心がけ，数学の知識があまりない人にでも読みやすくなるように工夫をした(つもりです)．
+線形代数学とは何かというところや行列から始め，簡単な例(小さなサイズの行列)を通して線形代数学の基礎的な知識を得られるようにした．
+線形代数学について真面目に書こうとすると，ページ数が膨大となり終わりが見えなくなるためなるべく定義や定理などを挿入しない形をとった(真面目に全部書くとそれこそ「本」を書くことになるので)．
+
+この資料を読んだ人たちが，線形代数学がどんなものか雰囲気を感じ取ってもらい，ちゃんとした数学書などで勉強しようと意欲を持てば何よりも嬉しいです．
+\end{abstract}
+\newpage
+\tableofcontents 
+
+
+\newpage
+%%%%%%%%%%%%%%本編%%%%%%%%%%%%%%%%%%%%
+\section{線形代数学とは}
+\subsection{線形とは}
+\bm{線形}とは平たい言葉で言うと"まっすぐ"のことである．小学生から定規で一度は引いたことはあるだろうあの"まっすぐ"である．
+小学生から学ぶということは，図形の中でおそらく最も扱いやすく簡単であるということだ．
+
+% $\left[
+%     \begin{array}{cZc}
+%     a & b & c \\
+% \RC d & e & f\\
+%     g & h & i
+% \end{array}
+% \right]$
+
+まっすぐな図形と聞くときっと，小学生もしくは中学生で学んだ「比例」の式や「一次関数」の式である
+\begin{equation*}
+    y = ax + b \ (a \neq 0)
+\end{equation*}
+を思い浮かべる人がいるだろう．まさにこの式こそが線形であることを述べている．
+
+つまり，「線形」とは「まっすぐ」を数学的に言い表したに過ぎない(が線形代数学が簡単と言っているわけではない)．
+\subsection{代数とは}
+\bm{代数}とは「数学の一分野で，数の代わりに文字を用いて方程式の解法などを研究する学問」\footnote{wikipedia参照}のことである．
+例えば，次のような$x,y$に関する方程式に関して研究する分野のことを一般には代数学という\footnote{もちろんこれだけでなくさまざまな対象を研究している}:
+\begin{align*}
+2x + 1 &= 2,\\
+3x^2 - x - 2 &= 0,\\
+a_{n}x^n + a_{n-1}x^{n-1} + \cdots + a_{1}x + a_{0} &= 0\ (a_{i} \in \mathbb{R}),\\
+\begin{cases}
+    2x + y = 2 \\
+    x - y = 1
+\end{cases}
+\end{align*}
+
+% そのほかにも「群・環・体」と呼ばれる集合に演算を定義した代数系と呼ばれるものも対象としており，その抽象度は計り知れない．
+\subsection{改めて線形代数学とは}
+上記から改めて線形代数学というものを考えると，
+\begin{center}
+まっすぐを中心とした理論を方程式の観点から研究する分野\footnote{ちゃんとした定義などは本やネットで調べてみてください}
+\end{center}
+であると言えるだろう．また，代数学において線形とは，いわゆる1次式のことを表しており，つまりは1次方程式に関する学問だと思うこともできる．
+今では数学の基礎となっており，線形代数学なしで数学を語ることはできない．
+
+それでは，まっすぐな数学の世界を楽しんでください．
+\section{ベクトルと行列}
+本節では，ベクトルと行列について述べる．「ベクトル」とは高校のときの数学Bで学んだあのベクトルのことであるが，「行列」とはお店で並ぶ列のことではない． 
+実はベクトルも行列の一部であり，
+\begin{center}
+    行列はベクトルを抽象化したもの．
+\end{center}
+と言えるだろう．
+
+ベクトルとは，「向き」と「大きさ」をもった量のことをいい，これも「まっすぐ」な数学の対象である．よく次のように成分表示される:
+\begin{equation*}
+    \vec{a} = (1,2)．
+\end{equation*}
+このベクトルは，数が1行2列に並んでいると思って欲しい．すると行列とは，この行と列の数をもっと増やしたものと抽象化できる．例えば，次のようなものが行列である:
+\begin{equation*}
+    A=\begin{bmatrix}
+        1 & 2\\
+        3 & 4
+    \end{bmatrix},
+    B=\begin{bmatrix}
+        -1 & 0 & 8\\
+        0 & 2 & 2 \\
+        10 & 3 & 0\\
+        0 & 1 & 6
+    \end{bmatrix},
+    C=\begin{bmatrix}
+        1\\
+        2\\
+        -1\\
+        0
+    \end{bmatrix}
+\end{equation*}
+行列はよく大文字のアルファベットを用いて表される．また，数学界には行列を書くときに丸括弧にするのか四角括弧にするのかの二大派閥が存在するが，筆者は四角括弧派の人間である．\footnote{大きな行列を手書きするときには曲線より直線で描く四角括弧の方が綺麗にかけるため}
+
+行列で大事なことはその中の数よりも，行数と列数である．
+例えば，上記の行列$A$は2行2列の行列，$B$は4行3列の行列，$C$は4行1列の行列ということになる．
+また，行と列が等しい行列のことを特別に正方行列と呼ぶ．つまり，行列$A$は正方行列であり，特に2次正方行列という(一般に$n$次正方行列がある)．
+
+行列のサイズを述べるときは$n$行$m$列の行列であれば
+\begin{center}
+    $n \times m$ 行列
+\end{center}
+ということがある．
+
+行列の中の数のことを「成分」と呼ぶ．行と列を指定することでその数を抽出できる．例えば，上記の行列$A$の$(1,2)$成分は2である．他にも，行列$B$の$(3,2)$成分は3であるとわかる．
+\section{行列の演算}
+本節では，行列の計算方法について述べる．足し算・引き算は非常に直感的でなんの違和感もない計算方法だが，掛け算は慣れていないと少し難しく感じるかもしれない．
+\subsection{行列の加法と減法}
+行列の加法と減法は，成分ごとに計算をすれば良いので非常に簡単である．ただし，計算する2つの行列が全く同じサイズでなければならないことに注意が必要である．具体的には次のように計算ができる:
+\begin{equation*}
+    A = \begin{bmatrix}
+        1 & 0 & -2 \\
+        2 & 4 & 0
+    \end{bmatrix},
+    B = \begin{bmatrix}
+        0 & 1 & 2 \\
+        -1 & 2 & 0
+    \end{bmatrix}
+\end{equation*}
+のとき
+\begin{align*}
+    A+B &=
+    \begin{bmatrix}
+        1 & 0 & -2 \\
+        2 & 4 & 0
+    \end{bmatrix}
+    +
+    \begin{bmatrix}
+        0 & 1 & 2 \\
+        -1 & 2 & 0
+    \end{bmatrix}\\
+    &=
+    \begin{bmatrix}
+        1 & 1 & 0\\
+        1 & 6 & 0
+    \end{bmatrix}
+\end{align*}
+のように成分ごとに計算することができる．もちろん，減法に関しても
+\begin{align*}
+    A-B &=
+    \begin{bmatrix}
+        1 & 0 & -2 \\
+        2 & 4 & 0
+    \end{bmatrix}
+    -
+    \begin{bmatrix}
+        0 & 1 & 2 \\
+        -1 & 2 & 0
+    \end{bmatrix}\\
+    &=
+    \begin{bmatrix}
+        1 & -1 & -4\\
+        3 & 2 & 0
+    \end{bmatrix}
+\end{align*}
+と成分ごとに引き算をすればよい．
+
+\subsection{行列の乗法}
+行列の乗法に関しては少し計算方法がややこしい．習得してもらうためにはまずベクトルの内積を復習する．ベクトルの内積とは，2つのベクトルに対して定義される特別な演算で，
+\begin{align*}
+    \vec{a} &= (x_{1}, y_{1}),\\
+    \vec{b} &= (x_{2}, y_{2})
+\end{align*}
+という2つのベクトルに対して，
+\begin{equation*}
+    \vec{a} \cdot \vec{b} = x_{1}x_{2} + y_{1}y_{2}
+\end{equation*}
+と各成分を掛けて足すという計算をした．この計算方法が行列の乗法でも使われる．
+\subsubsection{行列のスカラー倍}
+行列にスカラーをかけると，各成分がそのスカラー倍されることになる．例えば次のようにスカラー倍は計算できる:
+\begin{equation*}
+    3
+    \begin{bmatrix}
+        2 & 1\\
+        1 & -1
+    \end{bmatrix}
+    = 
+    \begin{bmatrix}
+        6 & 3\\
+        3 & -3
+    \end{bmatrix}
+\end{equation*}
+いたって普通の計算である．
+\subsubsection{行列の普通の積}
+行列の一般的な積の計算は次のように行われる．細かく計算過程を記載するのでじっくりと眺めてみてほしい．
+行列
+\begin{equation*}
+    A = \begin{bmatrix}
+        1 & 0 & -2 \\
+        2 & 4 & 0 
+    \end{bmatrix},
+    B = \begin{bmatrix}
+        0 & 1  \\
+        -1 & 2  \\
+        1 & 2 
+    \end{bmatrix}
+\end{equation*}
+に対して，行列の積を次のように計算する:
+\begin{align*}
+    AB &= \left[\begin{array}{ccc}
+        \textcolor{red}{1} & \textcolor{red}{0} & \textcolor{red}{-2} \\
+        2 & 4 & 0 
+    \end{array}
+    \right]
+    \left[\begin{array}{cc}
+        \textcolor{red}{0} & 1  \\
+        \textcolor{red}{-1} & 2  \\
+        \textcolor{red}{1} & 2 
+    \end{array}
+    \right]\\
+    &=\left[\begin{array}{cc}
+        \textcolor{red}{1 \cdot 0 + 0 \cdot (-1) + (-2) \cdot 1} & 1\cdot 1 + 0\cdot 2 + (-2)\cdot 2\\
+        2\cdot 0 + 4\cdot (-1) + 0\cdot 1 & 2\cdot1 + 4\cdot2 + 0\cdot2
+    \end{array}
+    \right]\\
+    &=\left[
+        \begin{array}{cc}
+            \textcolor{red}{-2} & -3 \\
+            -4 & 10
+        \end{array}
+    \right]
+\end{align*}
+% \colorbox{red}{sample}
+赤色で示した部分をベクトルの内積と思って計算すると1つの要素がわかる．(1,2)要素を計算したいとすれば，行列$A$の1行目と行列$B$の2列目をそれぞれベクトルだと思って内積を計算すれば$-3$が計算できる．
+かなり複雑で慣れていないと素早く計算ができないが，内積計算の繰り返しで成分の場所にさえ気をつければ問題なく慣れることだろう．
+また，行列の積は順序によって計算結果が異なることにも注意が必要である．
+
+さらに，行列の積が計算できる場合は，左側の行列の列数と右側の行列の行数が一致している必要がある．
+そして行列の積のサイズは「左の行列の行数」×「右の行列の列数」となる(上の例であれば2×2となる)．
+
+逆に，行列を2つの行列の積に書き直すことも軽く練習しておこう．次の2行1列の行列は以下のように変形することが可能である:
+\begin{align*}
+    \begin{bmatrix}
+        2x + y \\
+        x - y
+    \end{bmatrix}
+    &=
+    \begin{bmatrix}
+        2 & 1 \\
+        1 & -1
+    \end{bmatrix}
+    \begin{bmatrix}
+        x \\
+        y
+    \end{bmatrix}．
+\end{align*}
+
+
+
+\subsubsection{アダマール積}
+アダマール積とは，普通の数学の行列の計算で使われることはあまりないが，機械学習分野ではよく使われる計算方法である．
+先ほど紹介した掛け算と比較すると全く難しくない．成分ごとに掛け算をするという「本来こっちがメインの積だろう」と突っ込んでしまいたくなる掛け算がアダマール積である．
+つまり，
+行列
+\begin{equation*}
+    A = \begin{bmatrix}
+        1 & 0 & -2 \\
+        2 & 4 & 0
+    \end{bmatrix},
+    B = \begin{bmatrix}
+        0 & 1 & 2 \\
+        -1 & 2 & 0
+    \end{bmatrix}
+\end{equation*}
+に対して，
+\begin{align*}
+    A \odot B &= \begin{bmatrix}
+        1 & 0 & -2 \\
+        2 & 4 & 0
+    \end{bmatrix}
+    \odot \begin{bmatrix}
+        0 & 1 & 2 \\
+        -1 & 2 & 0
+    \end{bmatrix}\\
+    &= \begin{bmatrix}
+        0 & 0 & -4\\
+        -2 & 8 & 0
+    \end{bmatrix}
+\end{align*}
+のように計算することをアダマール積と呼ぶ．この計算を見てわかるように，2つの行列のサイズが同じでないと計算はできない．
+
+
+
+
+
+
+
+
+
+\section{行列と連立方程式}
+本節では，行列と連立方程式の関係について述べる．ここからがいよいよ線形代数学になると言ってもよいだろう．行列が代数学(方程式を解く)でどのように使われていて，どれだけ強力な道具となるか体感してもらいたい．
+\subsection{行列で連立方程式を記述する}
+次の2元1次の連立方程式を考える．
+\begin{equation*}
+    \begin{cases}
+        2x + y = 2\\
+        x - y = 4
+    \end{cases}
+\end{equation*}
+この連立方程式を見ると読者は解きたくて解きたくてたまらなくなるはずだ．この連立方程式を解くと解は
+\begin{equation*}
+    (x,y) = (2,-2)
+\end{equation*}
+となったはずだ．この解は特に重要ではないので，再び方程式に目を向けてもらいたい．この方程式で重要な部分とは一体どこだろうか？
+$x,y$に関してはただの文字なので，正直これが「あ」「い」という文字だとして
+\begin{equation*}
+    \begin{cases}
+        2あ + い = 2\\
+        あ - い = 4
+    \end{cases}
+\end{equation*}
+という方程式を考えても解は先ほどと同じになる．くどいようだが，$x,y$を「afhgf」,「Fuefr」と意味不明な文字列にしても解は導出可能だ．
+つまり，方程式において重要なことは$x,y$のような変数ではなく，2,1などの係数が最も重要ということだ．なんなら左についている中括弧みたいなものも本質的には不要である．
+
+方程式の中の最も重要な対象である係数のみに着目できるように，連立方程式を次のように行列で表記する:
+\begin{equation*}
+    \begin{bmatrix}
+        2 & 1\\
+        1 & -1
+    \end{bmatrix}
+    \begin{bmatrix}
+        x\\
+        y
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        2\\
+        4
+    \end{bmatrix}
+\end{equation*}
+また，左辺の左側の行列を$A$，右側の行列を$\bm{x}$，右辺の行列を$\bm{b}$とおくと次のようにさらに簡潔に書ける:
+\begin{equation*}
+    A\bm{x}=\bm{b}
+\end{equation*}
+この式の形はまさに「線形」である．上記は2元の連立方程式で記述したが，これは一般に$n$元の連立方程式でも同様に記述ができる．
+行列を用いることで連立方程式はただの1次方程式へと変貌する．
+\subsection{行列を使って連立方程式を解く}
+中学生が学ぶような次の方程式には，いわゆる解の公式が存在する:
+\begin{equation*}
+    ax = b \Leftrightarrow x = \dfrac{b}{a} \ (a \neq 0)
+\end{equation*}
+では，行列で書かれた連立方程式も
+\begin{equation*}
+    A\bm{x} = \bm{b} \Leftrightarrow \bm{x} = \dfrac{\bm{b}}{A}
+\end{equation*}
+のようにシステマティックに解けることを期待したい．\footnote{この表記は数学的にはよろしくない}しかし，ある意味では期待通りになるが，やはり行列という数の集まりを扱っているため少し複雑になるところがある．
+まず，行列には割り算という概念が存在しない．というより作れないと言った方が正しい．そのため，分数ではなく，数で言うと逆数みたいなことを行列でも考える．
+
+数では，掛けて1になる数を逆数と呼んでいた．それを行列にも応用して逆数のようなものを行列でも作ってしまおうと言う話だ．
+まず，行列における「1」とは，どの行列にかけてもその行列の計算前と後を変えないものと考えることができる．それは単位行列と呼ばれ，2次の正方行列では次のように定義される:
+\begin{equation*}
+    E = 
+    \begin{bmatrix}
+        1 & 0\\
+        0 & 1
+    \end{bmatrix}
+\end{equation*}
+つまり，対角線の成分が全て1であり，それ以外の成分が全て0であるような行列を単位行列と呼ぶ．実際にどんな行列にこの単位行列をかけてもその行列を変えない性質を持っている．
+これを行列の世界の「1」とし，行列$A$に対して，ある行列をかけると単位行列$E$になるような行列を逆行列と呼ぶことにする．\footnote{一般に逆行列は正方行列のみに定義される言葉である}
+行列$A$を
+\begin{equation*}
+    \begin{bmatrix}
+        2 & 1\\
+        1 & -1
+    \end{bmatrix}
+\end{equation*}
+とすると$A$の逆行列は
+\begin{equation*}
+    - \dfrac{1}{3}
+    \begin{bmatrix}
+        -1 & -1\\
+        -1 & 2
+    \end{bmatrix}
+\end{equation*}
+となる．実際に計算をしてみると，
+\begin{align*}
+    - \dfrac{1}{3}
+    \begin{bmatrix}
+        -1 & -1\\
+        -1 & 2
+    \end{bmatrix}
+    \begin{bmatrix}
+        2 & 1\\
+        1 & -1
+    \end{bmatrix}
+    &= 
+    - \dfrac{1}{3}
+    \begin{bmatrix}
+        -3 & 0\\
+        0 & -3
+    \end{bmatrix}\\
+    &= 
+    \begin{bmatrix}
+        1 & 0\\
+        0 & 1
+    \end{bmatrix}
+\end{align*}
+がわかる．
+
+では，この逆行列をどのように導出すれば良いのだろうか．それは2次の正方行列の場合は
+\begin{equation*}
+    A = \begin{bmatrix}
+        a & b\\
+        c & d
+    \end{bmatrix}
+\end{equation*}
+のとき，逆行列$A^{-1}$は次のように計算できる:
+\begin{equation*}
+    A^{-1} = 
+    \dfrac{1}{ad - bc}
+    \begin{bmatrix}
+        d & -b\\
+        -c & a
+    \end{bmatrix}
+\end{equation*}
+また，このときに現れた$ad - bc$を$A$の行列式といい，
+$${\rm{det}} A$$
+と書く．\footnote{$n$次正方行列に対する逆行列や行列式の計算方法はもっと複雑である}
+
+この逆行列の計算を見るとわかるとおり，${\rm{det}}A = 0$の場合は逆行列は存在しない．この条件でない元であれば連立方程式をシステマティックに解くことが可能である．つまり，
+\begin{equation*}
+    A\bm{x} = \bm{b} \Leftrightarrow \bm{x} = A^{-1} \bm{b} \ ({\rm{det}} A \neq 0)
+\end{equation*}
+と連立方程式を解くことができる．
+
+それでは，実際に連立方程式を解いてみよう．
+\begin{equation*}
+    \begin{cases}
+        2x + y = 2\\
+        x - y = 4
+    \end{cases}
+\end{equation*}
+を解く．まずは行列に直して，
+\begin{equation*}
+    \begin{bmatrix}
+        2 & 1\\
+        1 & -1
+    \end{bmatrix}
+    \begin{bmatrix}
+        x\\
+        y
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        2\\
+        4
+    \end{bmatrix}
+\end{equation*}
+となる．次に，左辺の左側の行列を$A$，右側の行列を$\bm{x}$，右辺の行列を$\bm{b}$とおくと
+\begin{equation*}
+    A \bm{x} = \bm{b}
+\end{equation*}
+となる．この方程式に左から$A$の逆行列$A^{-1}$をかけると
+\begin{align*}
+    \bm{x} &= 
+    A^{-1} \bm{b}\\
+    &=
+    - \dfrac{1}{3}
+    \begin{bmatrix}
+        -1 & -1\\
+        -1 & 2
+    \end{bmatrix}
+    \begin{bmatrix}
+        2\\
+        4
+    \end{bmatrix}\\
+    &=
+    - \dfrac{1}{3}
+    \begin{bmatrix}
+        -6\\
+        6
+    \end{bmatrix}\\
+    &=
+    \begin{bmatrix}
+        2\\
+        -2
+    \end{bmatrix}
+\end{align*}
+のように計算ができる．もちろん，最初に提示した連立方程式の解と同じであることは言うまでもない．
+
+このように行列を使って連立方程式を解くと，加減法などを使わずに連立方程式を解くことが可能である．これは一般の連立$n$元1次方程式でも同様である．
+方程式を行列に直し，行列の逆行列を求め，左からその逆行列を両辺に掛けて計算すると(一定の条件を満たせば)どんな連立$n$元1次方程式でも解ける．
+
+
+\section{行列の幾何的な意味}
+本節では，行列を図形の中でどのような意味を持つのかを述べる．簡潔に述べると行列とは，
+\begin{center}
+ベクトルを他のベクトルに写す変換器
+\end{center}
+と言える．例えば，行列$A$，ベクトル$\bm{x}$を次のように設定する:
+\begin{equation*}
+    A=
+    \begin{bmatrix}
+        1 & 2\\
+        2 & 1
+    \end{bmatrix},
+    \bm{x} =
+    \begin{bmatrix}
+        1\\
+        -1
+    \end{bmatrix}．
+\end{equation*}
+このベクトル$\bm{x}$を行列$A$と掛けてみると，
+\begin{align*}
+    A \bm{x} &=
+    \begin{bmatrix}
+        1 & 2\\
+        2 & 1
+    \end{bmatrix}
+    \begin{bmatrix}
+        1\\
+        -1
+    \end{bmatrix}\\
+    &=
+    \begin{bmatrix}
+        -1\\
+        1
+    \end{bmatrix}
+\end{align*}
+となり，ベクトル$\bm{x}$が別のベクトルに変換されたことがわかる．
+\section{固有値と固有ベクトル}
+本節では，行列の固有値と固有ベクトルについて述べる．上記で行列とはベクトルを変換させるものと説明したが，ある行列に対してほぼ不変なベクトルが存在する．
+このほぼ不変なベクトルを固有ベクトルと呼ぶ．この固有値と固有ベクトルは線形代数学で非常に重要な役割を果たす．
+\subsection{固有値と固有ベクトルとは}
+例えば上記の$A$と$\bm{x}$は行列$A$をかけてもベクトルが変化しない例である．細かく言えば変わっているが，おおらかな気持ちを持って次のようにみるとあまり変換されていないと思うのではないだろうか．
+\begin{equation*}
+    A \bm{x}=
+    \begin{bmatrix}
+        -1\\
+        1
+    \end{bmatrix}
+    =
+    - \bm{x}
+\end{equation*}
+その他にも，
+\begin{equation*}
+    \bm{y}=
+    \begin{bmatrix}
+        1\\
+        1
+    \end{bmatrix}
+\end{equation*}
+とすると，
+\begin{align*}
+    A \bm{y}
+    &=
+    \begin{bmatrix}
+        1 & 2\\
+        2 & 1
+    \end{bmatrix}
+    \begin{bmatrix}
+        1\\
+        1
+    \end{bmatrix}\\
+    &=
+    \begin{bmatrix}
+        3\\
+        3
+    \end{bmatrix}\\
+    &=
+    3 \bm{y}
+\end{align*}
+と変換前のベクトル$\bm{y}$の3倍になっている．このように，行列を1つ決めるとその行列ではほとんど変わらないベクトルがいくつか存在することがわかる．
+
+上記のようなベクトル$\bm{x},\bm{y}$を
+\begin{center}
+    固有ベクトル
+\end{center}
+と呼ぶ(正確には行列$A$に対する固有ベクトル)．また，変換後のベクトルの係数のことを
+\begin{center}
+    固有値
+\end{center}
+と呼ぶ．一般的にまとめると次のようになる:
+
+$n$次の正方行列$A$に対して，
+\begin{equation*}
+    A \bm{x} = \lambda \bm{x}
+\end{equation*}
+となるベクトル$\bm{x} \neq \bm{0}$，定数$\lambda$が存在するとき，$\bm{x}$を行列$A$の固有ベクトル，$\lambda$を行列$A$の固有値という．
+
+固有ベクトルは，本来ベクトルを向きも大きさも変化させてしまう行列に対して，向きは変化せず大きさのみが変化する特別なベクトルだと思える．また$\lambda$はその変化率を指している．$\lambda$が負の数であればそれはベクトルが真逆に向いたことを表している．
+
+\subsection{固有値と固有ベクトルの求め方}
+ではその固有値と固有ベクトルはどのようにして求めれば良いだろうか．上記ではいきなり登場したが，もっと複雑な固有値を持つ可能性もあり得る．
+これは上記で一般的にまとめた
+\begin{equation*}
+    A \bm{x} = \lambda \bm{x}
+\end{equation*}
+が使える．この等式を変形して
+\begin{equation*}
+    (A -\lambda E)\bm{x} = \bm{0}
+\end{equation*}
+とできる．ここで$E$は単位行列である(行列$A$と定数$\lambda$はサイズが異なるので計算できないため$\lambda$の後ろには単位行列が隠れていると思う)．
+
+左辺の$\bm{x}$はゼロベクトルではないため，$A - \lambda E$が0なる必要があるが，この場合は$A - \lambda \bm{x}$の行列式が0にならなければならない．\footnote{詳しくは線形代数の本を参照}
+つまり
+\begin{equation*}
+    {\rm{det}}(A-\lambda E) = 0
+\end{equation*}
+とならなければならない．行列式自体は数値なので，これは$\lambda$に関する方程式になる．よって，代数学の基本定理\footnote{$n$次の複素係数方程式には重複も込めてちょうど$n$個の解が存在するという代数学の大定理}により
+複素数の範囲で$\lambda$が求まる．
+
+では，先ほど行列
+\begin{equation*}
+    A=
+    \begin{bmatrix}
+        1 & 2\\
+        2 & 1
+    \end{bmatrix}
+\end{equation*}
+の固有値を求めてみよう．まず，
+\begin{align*}
+    A - \lambda E
+    &=
+    \begin{bmatrix}
+        1 & 2\\
+        2 & 1
+    \end{bmatrix}
+    - 
+    \begin{bmatrix}
+        \lambda & 0\\
+        0 & \lambda
+    \end{bmatrix}\\
+    &= 
+    \begin{bmatrix}
+        1-\lambda & 2\\
+        2 & 1-\lambda
+    \end{bmatrix}
+\end{align*}
+なので，
+\begin{align*}
+    {\rm{det}}(A-\lambda E)
+    &=
+    (1-\lambda)^2 - 4\\
+    &={\lambda}^2-2\lambda - 3\\
+    &=(\lambda + 1)(\lambda - 3)
+\end{align*}
+となる．よって，求める固有値は
+\begin{equation}
+    \lambda = -1,3 \label{eq.6.1}
+\end{equation}
+である．もちろんここから固有ベクトルを求めることも可能である．
+\begin{equation*}
+    A - \lambda E)\bm{x} = \bm{0}
+\end{equation*}
+となるベクトル$\bm{x}$を求めれば良い．例えば$\lambda = 3$の場合を考える．
+\begin{equation*}
+    \begin{bmatrix}
+        -2 & 2\\
+        -2 & 2
+    \end{bmatrix}
+    \bm{x}
+    = \bm{0}
+\end{equation*}
+を満たす$\bm{x}$を求める．
+$\bm{x} = 
+\begin{bmatrix}
+    x\\
+    y
+\end{bmatrix}$
+とおき，行列で表示された連立方程式を展開すると
+\begin{equation*}
+    \begin{cases}
+        -2x + 2y = 0\\
+        -2x + 2y = 0
+    \end{cases}
+\end{equation*}
+となる．つまり本質的には1本の式のみで十分であることを表しているので，
+\begin{equation*}
+    -2x + 2y = 0
+\end{equation*}
+に注目する．$y$について解くと
+\begin{equation*}
+    y = x
+\end{equation*}
+となる．2つの文字に対して1つの式しかないので，この解を確定させること(ただ一つに決めること)は不可能である．この$y = x$
+を$\bm{x}$に代入すると，
+\begin{align*}
+    \bm{x}&=
+    \begin{bmatrix}
+        x\\
+        y
+    \end{bmatrix}\\
+    &=
+    \begin{bmatrix}
+        x\\
+        x
+    \end{bmatrix}\\
+    &=
+    x
+    \begin{bmatrix}
+        1\\
+        1
+    \end{bmatrix}
+\end{align*}
+が得られる．この係数の$x$は任意の数を取ることができ，定数倍はベクトルの向きに関係しないので，求める固有ベクトルは
+\begin{equation*}
+    \begin{bmatrix}
+        1\\
+        1
+    \end{bmatrix}
+\end{equation*}
+となる．
+
+\section{行列の対角化}
+本節では，行列の対角化について述べる．行列の対角化とは，いわゆる行列の「標準形」を求めるお話である．行列はサイズが大きくなるほど
+計算といったものが大変になるのは想像に容易いと思う．なるべく簡単な形にして計算したいと思うのは数学を嗜んでいる読者なら当然考えたいことだろう．
+\subsection{対角行列と冪乗計算}
+では，行列のどの計算を簡単にしたいと思うかと聞かれれば真っ先に
+\begin{center}
+    行列の積
+\end{center}
+と応えるだろう．全てとまでは行かないが，特に行列の冪乗計算は行列を「標準形」にすることで容易に計算することができる．
+標準形とはこの資料では次のような形をした行列を指すことにする:
+\begin{equation*}
+    A=\begin{bmatrix}
+        1 & 0 \\
+        0 & 2
+    \end{bmatrix},\ 
+    B=\begin{bmatrix}
+        3 & 0 & 0\\
+        0 & -1 & 0\\
+        0 & 0 & 4
+    \end{bmatrix}
+\end{equation*}
+つまり今回の「標準形」とは「対角成分」以外全て0となるような行列を指す．このような行列を一般に対角行列という．
+この対角行列は冪乗計算と非常に相性がいい．例えば$A$の冪乗を計算してみる．
+\begin{align*}
+    A^2 &=
+    \begin{bmatrix}
+        1 & 0\\
+        0 & 2
+    \end{bmatrix}
+    \begin{bmatrix}
+        1 & 0\\
+        0 & 2
+    \end{bmatrix}\\
+    &=
+    \begin{bmatrix}
+        1 & 0\\
+        0 & 4
+    \end{bmatrix},\ \\
+    A^3 &=A^2 A\\
+    &=
+    \begin{bmatrix}
+        1 & 0\\
+        0 & 4
+    \end{bmatrix}
+    \begin{bmatrix}
+        1 & 0\\
+        0 & 2
+    \end{bmatrix}\\
+    &=
+    \begin{bmatrix}
+        1 & 0\\
+        0 & 8
+    \end{bmatrix}
+\end{align*}
+となる．一般に自然数$n$に対して$A^n$は次のようになる:
+\begin{equation*}
+    A^n = 
+    \begin{bmatrix}
+        1^n & 0\\
+        0 & 2^n
+    \end{bmatrix}
+\end{equation*}
+このように行列は対角行列であれば，冪乗の計算が容易になる．
+
+\subsection{行列の対角化}
+つまり行列の対角化とは，与えられた行列を上記のような対角行列に変換することを指す．では与えられた行列をどのように対角化することができるのかという問いに関しては
+前節の固有値と固有ベクトルが密接に関係しておりそれらを用いて対角化することが可能である．
+対角化は，行列にある行列を掛け算することで実現される．例を見ることにする．
+
+行列$A$を
+\begin{equation*}
+    A=
+    \begin{bmatrix}
+        1 & 2\\
+        2 & 1
+    \end{bmatrix}
+\end{equation*}
+とし，行列$P$を
+\begin{equation*}
+    P=
+    \begin{bmatrix}
+        1 & 1\\
+        -1 & 1
+    \end{bmatrix}
+\end{equation*}
+とする．このとき，$P^{-1}AP$を計算する．
+\begin{equation*}
+    P^{-1}=
+    \dfrac{1}{2}
+    \begin{bmatrix}
+        1 & -1\\
+        1 & 1
+    \end{bmatrix}
+\end{equation*}
+なので，
+\begin{align*}
+    P^{-1}AP&=
+    \dfrac{1}{2}
+    \begin{bmatrix}
+    1 & -1\\
+    1 & 1    
+    \end{bmatrix}
+    \begin{bmatrix}
+        1 & 2\\
+        2 & 1
+    \end{bmatrix}
+    \begin{bmatrix}
+        1 & 1\\
+        -1 & 1
+    \end{bmatrix}\\
+    &=\dfrac{1}{2}
+    \begin{bmatrix}
+        -1 & 1\\
+        3 & 3
+    \end{bmatrix}
+    \begin{bmatrix}
+        1 & 1\\
+        -1 & 1
+    \end{bmatrix}\\
+    &=\dfrac{1}{2}
+    \begin{bmatrix}
+        -2 & 0\\
+        0 & 6
+    \end{bmatrix}\\
+    &=
+    \begin{bmatrix}
+        -1 & 0\\
+        0 & 3
+    \end{bmatrix}
+\end{align*}
+のように対角行列に変換することができる．ここに現れる対角成分$-1,\ 3$は\eqref{eq.6.1}で現れた固有値に等しいがこれは偶然ではない．
+このように行列の対角化では，対角化しようとする行列の固有値が対角成分となり，対角化をすることができる．また，行列$P$
+についても固有ベクトル$\bm{x},\ \bm{y}$になっていることもわかる．もちろんこれも偶然ではなく，対角化するための行列$P$
+は固有ベクトルを並べて作られる(今回は$P=[\bm{x}\ \bm{y}]$のように並べた)．
+
+上記のような固有値と固有ベクトルを用いて対角化できる原理は次のとおりであり，以下の説明は一般に$n$次正方行列でも同様である．
+
+$\bm{x},\ \bm{y}$を固有ベクトル，それぞれの固有値を$\lambda_{x},\ \lambda_{y}$
+とする．このとき，
+\begin{equation*}
+    A\bm{x} = \lambda_{x}\bm{x},\ A\bm{y} = \lambda_{y}\bm{y}
+\end{equation*}
+が成り立つ．これらを次のように行列にする:
+\begin{equation*}
+    \begin{bmatrix}
+        A\bm{x} & A\bm{y}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \lambda_{x}\bm{x} & \lambda_{y}\bm{y}
+    \end{bmatrix}
+\end{equation*}
+さらに，
+\begin{equation*}
+    \begin{bmatrix}
+        A\bm{x} & A\bm{y}
+    \end{bmatrix}
+    =
+    A
+    \begin{bmatrix}
+        \bm{x} & \bm{y}
+    \end{bmatrix},
+\end{equation*}
+\begin{equation*}
+    \begin{bmatrix}
+        \lambda_{x}\bm{x} & \lambda_{y}\bm{y}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+        \lambda_{x} & 0\\
+        0 & \lambda_{y}
+    \end{bmatrix}
+    \begin{bmatrix}
+        \bm{x} & \bm{y}
+    \end{bmatrix}
+\end{equation*}
+と変形できるので($A$や$\bm{x},\ \bm{y},\ \lambda_{x},\ \lambda_{y}$を具体的なものに置き換えて計算してみると計算の意味がわかる．また，ベクトルや行列は1つの数のように考えてみる)，
+\begin{equation*}
+    P=
+    \begin{bmatrix}
+        \bm{x} & \bm{y}
+    \end{bmatrix}
+\end{equation*}
+とおけば，
+\begin{equation*}
+    AP = 
+    \begin{bmatrix}
+        \lambda_{x} & 0\\
+        0 & \lambda_{y}
+    \end{bmatrix}P
+\end{equation*}
+より，
+\begin{equation*}
+    P^{-1}AP = 
+    \begin{bmatrix}
+        \lambda_{x} & 0\\
+        0 & \lambda_{y}
+    \end{bmatrix}
+\end{equation*}
+が成り立つ．\footnote{行列$P$は必ず逆行列をもつことが証明されている．}
+
+以上が対角化の原理である．行列$A$の固有値が対角行列の対角成分となり，対角化する行列$P$は固有ベクトルを並べたものであるとわかる(固有値と固有ベクトルの順番は合わせる必要がある)．
+
+\subsection{行列の対角化の応用}
+行列の対角化は冪乗計算において絶大な威力を発揮する．次の行列の$n$乗を計算することを考える．
+\begin{equation*}
+    A=
+    \begin{bmatrix}
+        1 & 2\\
+        2 & 1
+    \end{bmatrix}
+\end{equation*}
+2乗，3乗と計算し，規則を見つけて$n$乗の場合を推測して数学的帰納法で示すことも可能だが，少し博打がすぎるようにも思える．行列の対角化をすることで
+行列の$n$乗計算を楽にできる．\footnote{多項式の割り算を用いた行列の$n$乗計算も存在する}前小節において，行列$A$は2行2列の行列
+\begin{equation*}
+    P=
+    \begin{bmatrix}
+        1 & 1\\
+        -1 & 1
+    \end{bmatrix}
+\end{equation*}
+を用いて，
+\begin{equation}
+    P^{-1}AP=
+    \begin{bmatrix}
+        -1 & 0\\
+        0 & 3
+    \end{bmatrix}
+\end{equation}
+とできた．この両辺を$n$乗することを考える．右辺は対角行列なので，
+\begin{equation*}
+    \begin{bmatrix}
+        (-1)^n & 0\\
+        0 & 3^n
+    \end{bmatrix}
+\end{equation*}
+が成り立つ．ここで，左辺の$n$乗について考える．まずは2乗について考えると
+\begin{align*}
+    (P^{-1}AP)^2 &= (P^{-1}AP)(P^{-1}AP)\\
+                 &= P^{-1}A(PP^{-1})AP\\
+                 &= P^{-1}AEAP\\
+                 &= P^{-1}A^2P 
+\end{align*}
+となる．3乗すると(計算は省略するが)
+\begin{equation*}
+    (P^{-1}AP)^3 = P^{-1}A^3P
+\end{equation*}
+となる．$P$と$P^{-1}$がうまく打ち消しあって中の$A$のみ冪乗計算されることになることがわかる．よって，$n$乗でも同様に
+\begin{equation*}
+    (P^{-1}AP)^n = P^{-1}A^nP
+\end{equation*}
+が成り立つ．よって，
+\begin{equation*}
+    P^{-1}A^n P = 
+    \begin{bmatrix}
+        (-1)^n & 0\\
+        0 & 3^n
+    \end{bmatrix}
+\end{equation*}
+となる．この式の左から$P$，右から$P^{-1}$をかけることで
+\begin{align*}
+    A^n &=
+    \begin{bmatrix}
+        1 & 1\\
+        -1 & 1
+    \end{bmatrix}
+    \begin{bmatrix}
+        (-1)^n & 0\\
+        0 & 3^n
+    \end{bmatrix}
+    \dfrac{1}{2}
+    \begin{bmatrix}
+        1 & -1\\
+        1 & 1
+    \end{bmatrix}\\
+    &=
+    \dfrac{1}{2}
+    \begin{bmatrix}
+        1 & 1\\
+        -1 & 1
+    \end{bmatrix}
+    \begin{bmatrix}
+        (-1)^n & -(-1)^n \\
+        3^n & 3^n
+    \end{bmatrix}\\
+    &=
+    \dfrac{1}{2}
+    \begin{bmatrix}
+        (-1)^n + 3^n & -(-1)^n + 3^n \\
+        -(-1)^n + 3^n & (-1)^n + 3^n
+    \end{bmatrix}
+\end{align*}
+が成り立つ．確認として$n=1$を代入すると，
+\begin{align*}
+    A^1 &=
+    \dfrac{1}{2}
+    \begin{bmatrix}
+        (-1) + 3 & -(-1) + 3 \\
+        -(-1) + 3 & (-1) + 3
+    \end{bmatrix}\\
+    &=
+    \begin{bmatrix}
+        1 & 2\\
+        2 & 1
+    \end{bmatrix}
+\end{align*}
+となり，確かに正しいことが確認できる．
+
+\section{行列の特異値分解}
+本節では行列の特異値分解について述べる．機械学習分野においては非常によく登場する理論である．行列の本質的な部分を抽出するときに対角化や特異値分解が強力な役割を果たす．
+\subsection{特異値分解とは}
+前節までの行列の対角化は全て正方行列に限られた話であったが，やはり正方行列ではない一般のサイズの行列に対しても対角化のような操作を行いたいと考えるのは当然の発想である．
+それが特異値分解と呼ばれるもので，対角化の一般化として知られる．
+次の行列$A$は正方行列ではないため，対角化をすることができない．
+\begin{equation*}
+    A=
+    \begin{bmatrix}
+        2 & 1 & 1\\
+        1 & 1 & 2
+    \end{bmatrix}
+\end{equation*}
+しかし，特異値分解であれば可能である．\footnote{任意の行列に対して特異値分解可能であることが証明されている．}
+\subsection{特異値分解の計算方法(概略)}
+特異値分解の計算手順は多く，煩雑なものになるのでステップ分けして概要を述べる．ここで，下記に現れる$^{t}A$とは転置行列を表し，行列$A$の$(i,j)$成分を$(j,i)$成分にした行列である．行と列のサイズが入れ替わる．
+\begin{enumerate}
+    \item[Step 1] $^{t}AA,\ A {^{t}A}$の固有値を求める．
+    
+    まず，$^{t}AA,\ A {^{t}A}$はそれぞれともに正方行列になることに注意する．そして，実は$^{t}AA,\ A {^{t}A}$の0でない固有値はともに同じであり，その値は11,\ 1である($3\times 3$行列の方からは0の固有値が現れる)．
+    \item[Step 2] $^{t}AA,\ A {^{t}A}$のそれぞれの固有ベクトルを求める．
+    
+    $^{t}AA$は$2\times 2$行列なので，(大きさを1にした)固有ベクトルは2つありそれぞれ
+    \begin{equation*}
+        \bm{v}_{1}=
+        \dfrac{1}{\sqrt{2}}
+        \begin{bmatrix}
+            1\\
+            1
+        \end{bmatrix},\ 
+        \bm{v}_{2}=
+        \dfrac{1}{\sqrt{2}}
+        \begin{bmatrix}
+            1\\
+            -1
+        \end{bmatrix}
+    \end{equation*}
+    となる．また，$A{^{t}}A$は$3\times 3$行列なので(大きさを1にした)固有ベクトルは3つありそれぞれ
+    \begin{equation*}
+        \bm{u}_{1}=
+        \dfrac{1}{\sqrt{22}}
+        \begin{bmatrix}
+            3\\
+            2\\
+            3
+        \end{bmatrix},\ 
+        \bm{u}_{2}=
+        \dfrac{1}{\sqrt{2}}
+        \begin{bmatrix}
+            1\\
+            0\\
+            -1
+        \end{bmatrix},\ 
+        \bm{u}_{3}=
+        \dfrac{1}{\sqrt{11}}
+        \begin{bmatrix}
+            1\\
+            -3\\
+            1
+        \end{bmatrix}
+    \end{equation*}
+    となる．この$\{\bm{v}_{1},\bm{v}_{2}\}$と$\{\bm{u}_{1},\bm{u}_{2},\bm{u}_{3}\}$はそれぞれ互いに直交しており，大きさも1であることに注意する．
+    \item[Step 3] 直交行列$V,U$を求めて特異値分解する
+    
+    \begin{align*}
+        V &= \begin{bmatrix}
+            \bm{v}_{1} & \bm{v}_{2}
+        \end{bmatrix},\\
+        U &= \begin{bmatrix}
+            \bm{u}_{1} & \bm{u}_{2} & \bm{u}_{3}
+        \end{bmatrix}
+    \end{align*}
+    とすると$V,U$は直交行列になる．\footnote{転置行列が逆行列になるような行列のこと．つまり$^{t}A = A^{-1}$となる行列$A$のことであり，良い性質を多くもつ}
+
+    よって，
+    \begin{equation*}
+        ^{t}VAU
+    \end{equation*}
+    を計算すると
+    \begin{equation*}
+        ^{t}VAU=
+        \begin{bmatrix}
+            \sqrt{11} & 0 & 0\\
+            0 & 1 & 0
+        \end{bmatrix}
+    \end{equation*}
+    が成り立つ．
+\end{enumerate}
+これが特異値分解である．\footnote{正確には$A=V\Sigma {^{t}U}$と行列$A$を直交行列と対角行列の積に分解することを特異値分解と呼ぶ}
+機械学習分野で扱われる行列は一般に行数と列数が異なる場合が多いので，そのような場合でも対角化を行い計算を楽にしたり，行列の本質的な重要な部分を抜き出す操作としてこの特異値分解が利用される．\footnote{例えば教師なし学習における次元削減など}
+
+\section{おまけ：行列のJordan標準形}
+最後の節では，行列のJordan標準形について少しだけ述べる．
+
+Jordan標準形とは，行列の対角化の一般化であり，全ての正方行列はJordan標準形と呼ばれる行列に変換することができる．
+
+例えば，次の行列は対角化することができない．
+\begin{equation*}
+    A=
+    \begin{bmatrix}
+        4 & -1\\
+        1 & 2
+    \end{bmatrix}
+\end{equation*}
+実際，固有値を求めると$\lambda = 3$のみで，固有ベクトルも
+$\begin{bmatrix}
+    1\\
+    1
+\end{bmatrix}$
+のみである．$A$の対角化には固有値と固有ベクトルが2つ必要であるがここでは1つしか取ることができない．このように${\rm{det}}(A-\lambda E)=0$が重解をもつ場合には
+対角化できないこともある．
+
+では対角化を諦めるのかというとそうではない．なるべく対角化と似たような変換ができないかを考える．それこそがJordan標準形であり，任意の正方行列は
+Jordan標準形に変換できることが証明されている．詳しい理論や計算方法を述べることはここではしないが，例えば行列$A$は次のようなJordan標準形へと変換される．
+\begin{equation*}
+    J=
+    \begin{bmatrix}
+        3 & 1\\
+        0 & 3
+    \end{bmatrix}
+\end{equation*}
+このように，Jordan標準形においても対角成分に固有値が並ぶ．対角行列とまではいかないが，かなり近い形に変換されていることがわかる．また，行列$J$の(1,2)成分の1は偶然ではなく，Jordan標準形に変換すると対角成分の上に1がいくつか乗る．
+Jordan標準形に変換することで冪乗計算や，複雑な行列でもこの形に変換することで解析が可能となり，さまざまな行列の性質を調べることができる．
+
+
+
+\end{document}
