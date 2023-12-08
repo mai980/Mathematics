@@ -4,7 +4,7 @@
 もちろん、私が書きたいことを書きたいだけという気持ちもあります。大学数学で挫折する人を減らしたいと思い執筆してます。
 ## 執筆中資料
 - [線形代数学入門](https://github.com/mai980/Mathematics/blob/main/Linear_Algebra/Linear_Algebra.pdf)(執筆済み)
-- 微分積分学入門
+- [微分積分学入門](https://github.com/mai980/Mathematics/blob/main/Analysis/Analysis.pdf)(執筆中)
   - 極限編(執筆済み)
   - 微分編(執筆済み)
   - 積分編(執筆済み)
