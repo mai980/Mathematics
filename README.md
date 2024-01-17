@@ -4,12 +4,12 @@
 もちろん、私が書きたいことを書きたいだけという気持ちもあります。大学数学で挫折する人を減らしたいと思い執筆してます。
 ## 執筆中資料
 - [線形代数学入門](https://github.com/mai980/Mathematics/blob/main/Linear_Algebra/Linear_Algebra.pdf)(執筆済み)
-- [微分積分学入門](https://github.com/mai980/Mathematics/blob/main/Analysis/Analysis.pdf)(執筆中)
+- [微分積分学入門](https://github.com/mai980/Mathematics/blob/main/Analysis/Analysis.pdf)(執筆済み)
   - 極限編(執筆済み)
   - 微分編(執筆済み)
   - 積分編(執筆済み)
-  - 級数編(執筆中)
-- 集合と位相入門(執筆予定)
+  - 級数編(執筆済み)
+- 集合と位相入門(執筆中)
 ## 注意点
 基本的に無料でファイル配布しております。試験勉強、趣味での勉強、興味が湧いたから、などなどさまざまな目的でご使用していただいて結構です。ですが、お金を稼ぐ目的でダウンロードすることなどは絶対にやめてください。
 具体的な注意点を以下に記載します。
